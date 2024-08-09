@@ -94,27 +94,31 @@
 												<th>등록자</th>
 											</tr>
 												
-											<tr>
-												<td>1</td>
+											<tr th:each="vo, status : ${list}">
+												<td>[[${status.count}]]</td>
 												<td>
 													<a href="#" class="normal_btn">정보수정</a>
 													<a href="#" class="normal_btn modalOn">이미지수정</a>													
 												</td>
-												<td>20171518</td>
+												<td>[[${vo.prodId}]]</td>
 												<td>.....</td>
 
 												<td>
-													<a title="상세보기(클릭)" href="product_detail.html">
-														비타오백
+													<a title="상세보기(클릭)" th:href="@{/product/productDetail(prodId=${vo.prodId })}">
+														[[${vo.prodName}]]
 													</a>
 												</td>
-												<td>2017-03-01</td>
-												<td>16,000</td>
-												<td>0개</td>
-												<td>15%</td>
-												<td>판매중</td>
-												<td>처리완료</td>
-												<td>이규호</td>
+												<!--
+													자바 Date타입이면 #dates내장객체,
+													자바 LocalDate타입이면 #temporals내장객체
+												-->
+												<td>[[${#temporals.format(vo.prodRegdate, 'yyyy년MM월dd일 HH시mm분ss초')}]]</td>
+												<td>[[${vo.prodPrice}]]원</td>
+												<td>[[${vo.prodCount}]]개</td>
+												<td>[[${vo.prodDiscount}]]%</td>
+												<td>[[${vo.prodPurchaseYn == 'Y' ? '1회구매제한' : '제한없음'}]]</td>
+												<td>[[${vo.prodEnddate}]]</td>
+												<td>[[${vo.prodWriter}]]</td>
 
 											</tr>
 										</table>
@@ -216,6 +220,17 @@
 	</th:block>
 
 
+	<script th:inline="javascript">
+		var msg = '[[${msg}]]';
+
+		console.log(history.state);
+
+		if(msg != 'null') { //msg가 null이 아니라는 것은 msg값이 있다는 뜻
+			var m = JSON.parse(msg);
+			alert(m);
+			history.replaceState('back', '', null); //현재 브라우저 (추가할 데이터, 제목, url)
+		}
+	</script>
 
 
 
