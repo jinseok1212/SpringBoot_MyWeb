@@ -25,6 +25,7 @@ public class PageVO {
     //페이지 네이션 번호를 list로 생성
     private List<Integer> pageList; //페이지 번호리스트(*타임리프에서는 향상된for문을 쓰기위해 list로 페이지번호생성)
 
+    private int pageSize = 5;
     //생성자 - 생성될 때 criteria객체, 전체게시글 수를 받음
     public PageVO(Criteria cri, int total) {
 
@@ -37,11 +38,11 @@ public class PageVO {
         //1~10번 페이지 조회시 -> 10
         //11~20번 페이지 조회시 -> 20
         //끝페이지 = 올림(현재조회하는 페이지 / 페이지네이션개수) * 페이지네이션개수
-        this.end = (int)(Math.ceil(this.page / 10.0)  ) * 10;
+        this.end = (int)(Math.ceil(this.page / (double)this.pageSize)  ) * this.pageSize;
 
         //시작페이지 번호 계산
         //시작페이지 = 끝번호 - 페이지네이션개수 + 1
-        this.start = end - 10 + 1;
+        this.start = end - this.pageSize + 1;
         
         //실제 끝번호 재계산
         //총 게시물 개수가 53개 -> 실제끝번호 6, end페이지 10
