@@ -104,4 +104,18 @@
     <delete id="productDelete" parameterType="int">
         DELETE FROM PRODUCT WHERE PROD_ID = #{prodId}
     </delete>
+
+    <!--카테고리 1단계를 조회한다-->
+    <select id="getCategory" resultType="categoryVO">
+        SELECT * FROM PRODUCT_CATEGORY
+        WHERE CATEGORY_LV = 1
+    </select>
+    <!--카테고리 2단계를 조회한다-->
+    <!--PARENT_LV = 상위카테고리LV-->
+    <select id="getCategoryChild" resultType="categoryVO">
+        SELECT * FROM PRODUCT_CATEGORY
+        WHERE GROUP_ID = #{groupId}
+        AND CATEGORY_PARENT_LV = #{categoryLv}
+        AND CATEGORY_DETAIL_PARENT_LV = #{categoryDetailLv}
+    </select>
 </mapper>

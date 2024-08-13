@@ -1,11 +1,14 @@
 package com.coding404.myweb.product;
 
+import com.coding404.myweb.command.CategoryVO;
 import com.coding404.myweb.command.ProductVO;
 import com.coding404.myweb.util.Criteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 @Mapper
 public interface ProductMapper {
@@ -17,5 +20,8 @@ public interface ProductMapper {
     public ProductVO getDetail(int prodId);
     public int productUpdate(ProductVO vo); //수정
     public int productDelete(ProductVO vo); //삭제
-
+    //카테고리1단계
+    public ArrayList<CategoryVO> getCategory();
+    //카테고리 2,3단계
+    public ArrayList<CategoryVO> getCategoryChild(CategoryVO vo);
 }

@@ -98,7 +98,8 @@ function getCategory_List(e) {
 	$(e.currentTarget).find("a").removeClass("sub_menu_select");
 	$(e.target).addClass("sub_menu_select");
 	//태그처리
-	if(obj.category_lv == 1 || obj.category_lv == 2) {
+	console.log(obj);
+	if(obj.categoryLv == 1 || obj.categoryLv == 2) {
 		console.log('1lv');
 		$().loading(); //로딩
 		$(e.currentTarget).category_remove(); //이전 카테고리삭제
@@ -106,12 +107,24 @@ function getCategory_List(e) {
 		//////////////////////////////////////////////////
 		//비동기콜백에서 category_create() 호출
 		//비동기호출후 category_set() 호출
-		category_create(); //다음 카테고리생성
-		//////////////////////////////////////////////////
+		//category_create(); //다음 카테고리생성
+		$.ajax({
+			type : "get",
+			url : "/getCategoryChild/"+ obj.groupId + "/" + obj.categoryLv + "/" + obj.categoryDetailLv,
+			success : function(data) {
+				category_create(data);
+			},
+			error : function(err, status) {
+				alert("카테고리 조회 실패")
+			}
+		})
 
-		
-	} 
-	
+		//////////////////////////////////////////////////
+	}
+		//숙제
+		//카테고리 key값은 그룹번호 + 카테고리ID로 만들어집니다.
+		//클릭한 대상의 이 값을, 인풋태그[name=prodCategory]에 value에 값을 지정
+	$("input[name='prodCategory']").val(obj.groupId + obj.categoryId);
 }
 //카테고리세팅
 $.fn.category_set = function() {
@@ -129,16 +142,16 @@ $.fn.category_remove = function() {
 function category_create(data) {
 
 	//예시데이터
-	var data = [
+	/*var data = [
 	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
 	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
 	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'}
-  ];
+  ];*/
 
 	var category = "";
 	category += '<ul class="categoryList" style="position: relative;" onclick="getCategory_List(event);" >';
 	data.forEach(function(result, index) {
-		category += '<li><a href="#" data-set='+ JSON.stringify(result) +'>'+ result.category_detail_nm +'</a></li>';
+		category += '<li><a href="#" data-set='+ JSON.stringify(result) +'>'+ result.categoryDetailNm +'</a></li>';
 	});
 	category += '</ul>';
 
