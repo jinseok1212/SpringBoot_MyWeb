@@ -11,7 +11,7 @@ $(document).ready(function () {
 // - 토글
 $(document).ready(function() {
 	$(".showtoggle").click(function() {
-		
+
 		var result = $(this).next("ul").css("display");
 		if(result == "block") {
 			$(this).next("ul").slideUp();
@@ -26,37 +26,37 @@ $(document).ready(function() {
 
 	var fileTarget = $('.filebox .upload-hidden'); //jquery는 다중 태그이벤트도 한번에 처리
 	fileTarget.on('change', function(){ //change이벤트
-	if(window.FileReader){ // modern browser 
-		var filename = $(this)[0].files[0].name; } 
-	else { // old IE 
-		var filename = $(this).val().split('/').pop().split('\\').pop(); // 파일명만 추출 
-	} // 추출한 파일명 삽입 
-	$(this).siblings('.upload-name').val(filename); });
+		if(window.FileReader){ // modern browser
+			var filename = $(this)[0].files[0].name; }
+		else { // old IE
+			var filename = $(this).val().split('/').pop().split('\\').pop(); // 파일명만 추출
+		} // 추출한 파일명 삽입
+		$(this).siblings('.upload-name').val(filename); });
 
-	var imgTarget = $('.preview-image .upload-hidden'); 
-	imgTarget.on('change', function() { 
-		var parent = $(this).parent(); 
+	var imgTarget = $('.preview-image .upload-hidden');
+	imgTarget.on('change', function() {
+		var parent = $(this).parent();
 		// parent.children('.upload-display').remove(); 
-		
-		if(window.FileReader){ //image 파일만 
-			if (!$(this)[0].files[0].type.match(/image\//)) return; 
 
-			var reader = new FileReader(); 
-			reader.onload = function(e){ 
-				var src = e.target.result; 
+		if(window.FileReader){ //image 파일만 
+			if (!$(this)[0].files[0].type.match(/image\//)) return;
+
+			var reader = new FileReader();
+			reader.onload = function(e){
+				var src = e.target.result;
 				// parent.prepend('<div class="upload-display"><div class="upload-thumb-wrap"><img src="'+src+'" class="upload-thumb"></div></div>'); 
 				parent.find(".upload-thumb-wrap").children().attr("src", src);
-			} 
-			reader.readAsDataURL($(this)[0].files[0]); 
-		} else { 
-			$(this)[0].select(); 
-			$(this)[0].blur(); 
-			var imgSrc = document.selection.createRange().text; 
-			parent.prepend('<div class="upload-display"><div class="upload-thumb-wrap"><img class="upload-thumb"></div></div>'); 
+			}
+			reader.readAsDataURL($(this)[0].files[0]);
+		} else {
+			$(this)[0].select();
+			$(this)[0].blur();
+			var imgSrc = document.selection.createRange().text;
+			parent.prepend('<div class="upload-display"><div class="upload-thumb-wrap"><img class="upload-thumb"></div></div>');
 
-			var img = $(this).siblings('.upload-display').find('img'); 
-			img[0].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(enable='true',sizingMethod='scale',src=\""+imgSrc+"\")"; 
-		} 
+			var img = $(this).siblings('.upload-display').find('img');
+			img[0].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(enable='true',sizingMethod='scale',src=\""+imgSrc+"\")";
+		}
 	});
 
 });
@@ -97,8 +97,8 @@ function getCategory_List(e) {
 	//토글색처리
 	$(e.currentTarget).find("a").removeClass("sub_menu_select");
 	$(e.target).addClass("sub_menu_select");
+
 	//태그처리
-	console.log(obj);
 	if(obj.categoryLv == 1 || obj.categoryLv == 2) {
 		console.log('1lv');
 		$().loading(); //로딩
@@ -110,27 +110,27 @@ function getCategory_List(e) {
 		//category_create(); //다음 카테고리생성
 		$.ajax({
 			type : "get",
-			url : "/getCategoryChild/"+ obj.groupId + "/" + obj.categoryLv + "/" + obj.categoryDetailLv,
+			url : "/getCategoryChild/" + obj.groupId + "/"+ obj.categoryLv + "/" + obj.categoryDetailLv,
 			success : function(data) {
 				category_create(data);
 			},
 			error : function(err, status) {
-				alert("카테고리 조회 실패")
+				alert("카테고리 조회에 실패했습니다. 문의 1577-1577");
 			}
 		})
-
 		//////////////////////////////////////////////////
 	}
-		//숙제
-		//카테고리 key값은 그룹번호 + 카테고리ID로 만들어집니다.
-		//클릭한 대상의 이 값을, 인풋태그[name=prodCategory]에 value에 값을 지정
-	$("input[name='prodCategory']").val(obj.groupId + obj.categoryId);
+	//숙제
+	//카테고리 key값은 그룹번호 + 카테고리ID 로 만들어 집니다.
+	//클릭한 대상의 이 값을, 인풋태그[name=prodCategory] 에 value에 값을 지정
+	$(e.target).category_set();
+
 }
 //카테고리세팅
 $.fn.category_set = function() {
-	var category_id = this.data("set").category_id;
-	var group_id = this.data("set").group_id;
-	$("input[name='prod_category']").val(group_id + category_id ); //name이 prod_category인 곳에 추가
+	var category_id = this.data("set").categoryId; // 클릭한 대상의 categoryId
+	var group_id = this.data("set").groupId; //클릭한 대상의 groupId
+	$("input[name='prodCategory']").val(group_id + category_id ); //name이 prod_category인 곳에 추가
 }
 //이전카테고리 삭제JS
 $.fn.category_remove = function() {
@@ -142,11 +142,11 @@ $.fn.category_remove = function() {
 function category_create(data) {
 
 	//예시데이터
-	/*var data = [
-	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
-	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
-	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'}
-  ];*/
+	//	var data = [
+	//	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
+	//	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
+	//	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'}
+	//  ];
 
 	var category = "";
 	category += '<ul class="categoryList" style="position: relative;" onclick="getCategory_List(event);" >';
