@@ -18,31 +18,33 @@ import java.util.List;
 import java.util.UUID;
 
 @Service("productService") //이름
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductMapper productMapper;
 
+    @Value("${project.upload.path}") //application.properties에 있는 키값 받아옴
+    private String uploadPath; //업로드 경로
 
-        @Value("${project.upload.path}") // application.properties에 있는 키값 받아옴
-        private String uploadPath; //업로드 경로
-
-        //폴더 생성 함수
-        public String makeFolder(){
-            String filepath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"));
-            File file = new File(uploadPath + "/" + filepath);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            return filepath;
+    //폴더 생성 함수
+    public String makeFolder() {
+        String filepath = LocalDate.now().format( DateTimeFormatter.ofPattern("yyyyMM") );
+        File file = new File( uploadPath + "/" + filepath);
+        if(file.exists() == false) {
+            file.mkdirs(); //폴더 생성
         }
+        return filepath;
+    }
+
+
     @Override
     @Transactional(rollbackFor = Exception.class) //이 메서드 안에서 예외가 나면 ROLLBACK시킴
-    //단 try ~ catch문장으로 예외처리가 해결되면, 트랜잭션 처리가 되지 않습니다.
+    //단 try ~ catch문장으로 예외처리가 해결 되면, 트랜잭션 처리가 되지 않습니다.
     public int productInsert(ProductVO vo, List<MultipartFile> files) {
+
         //1st - 상품 인서트
-        int result = productMapper.productInsert(vo);//상품 insert
-        //2nd - 파일 업로드
+        int result = productMapper.productInsert(vo); //상품 insert
+        //2nd - 파일업로드
         for(MultipartFile file : files) {
             String originName = file.getOriginalFilename(); //파일명
             String filename = originName.substring(  originName.lastIndexOf("\\") + 1);
@@ -63,15 +65,16 @@ public class ProductServiceImpl implements ProductService{
             //3nd - 파일 인서트
             productMapper.uploadFile(
                     ProductUploadVO.builder()
-                    .filename(filename)
-                    .filepath(filepath)
-                    .uuid(uuid)
-                    .prodWriter(vo.getProdWriter())
-                    .build()
+                            .filename(filename)
+                            .filepath(filepath)
+                            .uuid(uuid)
+                            .prodWriter( vo.getProdWriter() )
+                            .build()
+                    );
 
-            );
         }
-        return productMapper.productInsert(vo);
+
+        return result;
     }
 
     @Override
@@ -84,7 +87,6 @@ public class ProductServiceImpl implements ProductService{
         return productMapper.getTotal(userId, cri);
     }
 
-
     @Override
     public ProductVO getDetail(int prodId) {
         return productMapper.getDetail(prodId);
@@ -92,13 +94,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public int productUpdate(ProductVO vo) {
-
         return productMapper.productUpdate(vo);
     }
 
     @Override
-    public int productDelete(ProductVO vo) {
-        return productMapper.productDelete(vo);
+    public void productDelete(int prodId) {
+        productMapper.productDelete(prodId);
     }
 
     @Override
@@ -109,5 +110,10 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ArrayList<CategoryVO> getCategoryChild(CategoryVO vo) {
         return productMapper.getCategoryChild(vo);
+    }
+
+    @Override
+    public ArrayList<ProductUploadVO> getImgs(int prodId) {
+        return productMapper.getImgs(prodId);
     }
 }
